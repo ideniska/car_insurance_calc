@@ -1,7 +1,6 @@
 import "./index.css";
-import { AutoComplete, DatePicker, Space, Input, Select } from "antd";
-import React, { useState, useEffect, useMemo } from "react";
-import InputMask from "react-input-mask";
+import { AutoComplete, DatePicker, Input, Select } from "antd";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,13 +8,11 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/semantic-ui.css";
 
-const mockVal = (str, repeat = 1) => ({
-  value: str.repeat(repeat),
-});
-
-export default function Calc() {
+export default function First() {
   const _ = require("lodash");
+  // const currentDomain = window.location.host;
   const apiBaseUrl = "http://localhost:8000/api/";
+  // const apiBaseUrl = window.location.host + "/api/";
   const [carMakeInput, setCarMakeInput] = useState("");
   const [options, setOptions] = useState([]);
   const [trimOptions, setTrimOptions] = useState(null);
@@ -26,6 +23,7 @@ export default function Calc() {
   const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
   const [selectedTrim, setSelectedTrim] = useState(""); // user selected trim
   const [name, setName] = useState("");
+  const prevName = useRef();
   const [phone, setPhone] = useState("");
   const [userBirthDate, setUserBirthDate] = useState("");
 
@@ -48,6 +46,16 @@ export default function Calc() {
   const [totalPercentage, setTotalPercentage] = useState(50);
 
   useEffect(() => {
+    if (!prevName.current && name) {
+      setTotalPercentage(totalPercentage + percentageParams.name);
+    }
+    if (prevName.current && !name) {
+      setTotalPercentage(totalPercentage - percentageParams.name);
+    }
+    prevName.current = name;
+  }, [name]);
+
+  useEffect(() => {
     setIsMounted(true);
     axios.get(apiBaseUrl + "popular/").then((response) => {
       const mappedResponse = response.data.map((item) => {
@@ -66,6 +74,7 @@ export default function Calc() {
     if (!carInfo.year) return;
 
     getTrims(); // call API to get all trims for selected model year
+    setCarDropdownFocus(false);
     setTrimOptionsOpen(true); // open trims dropdown
   }, [carInfo.year]);
 
@@ -109,8 +118,8 @@ export default function Calc() {
 
       debauncedSearchModels(carMakeInput);
     }
-    setTrimOptionsOpen(false);
-    setCarDropdownFocus(true);
+    // setTrimOptionsOpen(false);
+    // setCarDropdownFocus(true);
   }, [carMakeInput]);
 
   // Increase totalPercentage when model year is selected
@@ -128,11 +137,11 @@ export default function Calc() {
   }, [selectedTrim]);
 
   // Increase totalPercentage when name is filled
-  useEffect(() => {
-    if (name) {
-      setTotalPercentage(totalPercentage + percentageParams.name);
-    }
-  }, [name]);
+  // useEffect(() => {
+  //   if (name) {
+  //     setTotalPercentage(totalPercentage + percentageParams.name);
+  //   }
+  // }, [name]);
 
   // Increase totalPercentage when phone is filled
   useEffect(() => {
@@ -150,6 +159,7 @@ export default function Calc() {
 
   const onSelect = (value, option) => {
     setCarMakeInput(value);
+
     if (!carInfo.model) {
       setCarInfo({
         model: option,
@@ -164,8 +174,6 @@ export default function Calc() {
       model: carInfo.model,
       year: option,
     });
-
-    setCarDropdownFocus(false);
   };
 
   const trimOnSelect = (value, option) => {
@@ -267,9 +275,12 @@ export default function Calc() {
                 style={{ width: 345, marginBottom: 20 }}
                 open={carDropdownFocus}
                 onSelect={onSelect}
+                // onDropdownVisibleChange={(visible) =>
+                //   setCarDropdownFocus(visible)
+                // }
                 onFocus={() => {
                   onChangeFocus(true);
-                  setTrimOptionsOpen(false);
+                  // setTrimOptionsOpen(false);
                 }}
                 onBlur={() => {
                   onChangeFocus(false);
@@ -316,7 +327,8 @@ export default function Calc() {
               />
 
               <PhoneInput
-                className="phone-input"
+                className="phone-input-container"
+                inputClass="phone-input"
                 country={"ca"}
                 onChange={(phone) => setPhone(phone)}
               />

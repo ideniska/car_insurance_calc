@@ -1,10 +1,10 @@
 import "./App.css";
-import Calc from "./pages/calc";
+import First from "./pages/first";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 function App() {
-  return <Calc />;
+  return <First />;
 }
 
 export default App;

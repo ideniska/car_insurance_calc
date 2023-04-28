@@ -95,7 +95,11 @@
 }
 
 .phone-input {
-    width: 345px;
-    margin-bottom: 20px;
-    border-radius: 6px;
+    width: 345px !important;
+
+    border-radius: 6px !important;
+}
+
+.phone-input-container {
+    margin-bottom: 20px !important;
 }
