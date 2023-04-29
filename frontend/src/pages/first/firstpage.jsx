@@ -1,4 +1,4 @@
-import "./index.css";
+import "./firstpage.css";
 import { AutoComplete, DatePicker, Input, Select } from "antd";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -7,11 +7,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/semantic-ui.css";
+import SecondPage from "../second/secondpage";
+import { Link } from "react-router-dom";
+import { userData } from "./userData";
 
-export default function First() {
+export default function FirstPage() {
   const _ = require("lodash");
   // const currentDomain = window.location.host;
-  const apiBaseUrl = "http://localhost:8000/api/";
+  // const apiBaseUrl = "http://localhost:8000/api/";
+  const apiBaseUrl = "http://127.0.0.1:8000//api/";
   // const apiBaseUrl = window.location.host + "/api/";
   const [carMakeInput, setCarMakeInput] = useState("");
   const [options, setOptions] = useState([]);
@@ -29,7 +33,11 @@ export default function First() {
 
   const [carInfo, setCarInfo] = useState({
     model: null,
+    modelId: null,
     year: null,
+    yearId: null,
+    trim: null,
+    trimId: null,
   });
 
   // Perecentage parameters for totalPercentage update
@@ -44,6 +52,17 @@ export default function First() {
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
   const [totalPercentage, setTotalPercentage] = useState(50);
+
+  // Update userData dict when user data is updated
+  useEffect(() => {
+    userData["carModel"] = carInfo.model;
+    userData["carModelId"] = carInfo.modelId;
+    userData["carYearId"] = carInfo.yearId;
+    userData["carTrimId"] = selectedTrim;
+    userData["userName"] = name;
+    userData["userPhone"] = phone;
+    userData["birthDate"] = userBirthDate;
+  }, [carInfo, name, phone, userBirthDate, selectedTrim]);
 
   useEffect(() => {
     if (!prevName.current && name) {
@@ -103,7 +122,9 @@ export default function First() {
     if (hasYear && !inputIncludesYear) {
       setCarInfo({
         model: carInfo.model,
+        modelId: carInfo.model.id,
         year: null,
+        yearId: null,
       });
 
       setOptions(carWithYearOptions);
@@ -114,6 +135,7 @@ export default function First() {
       setCarInfo({
         model: null,
         year: carInfo.year,
+        yearId: carInfo.year.id,
       });
 
       debauncedSearchModels(carMakeInput);
@@ -172,13 +194,15 @@ export default function First() {
 
     setCarInfo({
       model: carInfo.model,
+      modelId: carInfo.model.id,
       year: option,
+      yearId: option.id,
     });
   };
 
   const trimOnSelect = (value, option) => {
     setTrimOptionsOpen(false);
-    setSelectedTrim(value);
+    setSelectedTrim(option.id);
   };
 
   const onNameInput = (value, option) => {
@@ -345,9 +369,11 @@ export default function First() {
               <p>
                 <FontAwesomeIcon icon={faLock} /> Your information is secure
               </p>
-              <button type="submit" className="btn btn-primary">
-                Next
-              </button>
+              <Link to="/2">
+                <button type="submit" className="btn btn-primary">
+                  Next
+                </button>
+              </Link>
             </div>
           </div>
           <div className="calc__progress">
@@ -379,7 +405,4 @@ export default function First() {
   );
 }
 
-// TODO Phone Input width and border radius are not changing
-// TODO Percentage increase too often
-// TODO Code refactoring
-// TODO 2 page
+// TODO make NEXT button disabled if not 100% info

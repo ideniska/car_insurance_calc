@@ -1,10 +1,19 @@
 import "./App.css";
-import First from "./pages/first";
+import FirstPage from "./pages/first/firstpage";
+import SecondPage from "./pages/second/secondpage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import { BrowserRouter, Switch, Route, Link, Routes } from "react-router-dom";
 
 function App() {
-  return <First />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" Component={FirstPage}></Route>
+        <Route path="/2" Component={SecondPage}></Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

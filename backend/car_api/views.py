@@ -81,8 +81,9 @@ class ShowInsurancePriceView(generics.GenericAPIView):
         serializer = self.get_serializer(instance)
         koeff = 0.01
         data = serializer.data
-        insurance_price = float(data["price"]) * koeff
-        return Response({"insurance_price":insurance_price}) 
+        car_price = data["price"]
+        insurance_price = float(car_price) * koeff
+        return Response({"insurance_price":insurance_price, "car_price":car_price}) 
 
 
 class SearchModel(generics.ListAPIView):
