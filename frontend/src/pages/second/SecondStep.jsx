@@ -1,4 +1,5 @@
 import "./SecondStep.css";
+
 import {
   DatePicker,
   Input,
@@ -7,7 +8,9 @@ import {
   Slider,
   Button,
   Space,
+  Switch,
 } from "antd";
+
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -23,14 +26,90 @@ export default function SecondStep({
   const [deductibleChoice, setDeductibleChoice] = useState();
 
   const [insuranceParams, setInsuranceParams] = useState({
-    coverage: 1,
-    licenceYear: null,
-    deductible: 0,
+    coverage: 3,
+    licenceYear: 1,
+    deductible: 3,
     milage: 0,
-    tires: 0,
+    tires: 1,
+    lease: 0,
+    businessUse: 0,
+    yearlyRate: 1,
   });
 
   const [insuranceQuoteRate, setInsuranceQuoteRate] = useState(0.01);
+
+  // if (tires === 0) {insuranceQuoteRate + 0.0015}
+  // if (coverage === 2) {insuranceQuoteRate + 0.0015}
+  // if (coverage === 1) {insuranceQuoteRate + 0.003}
+  // if (deductible === 0) {insuranceQuoteRate + 0.003}
+  // if (deductible === 1) {insuranceQuoteRate + 0.0025}
+  // if (deductible === 2) {insuranceQuoteRate + 0.0015}
+  // if (businessUse === 1) {insuranceQuoteRate + 0.003}
+  // if (lease === 1) {insuranceQuoteRate + 0.0025}
+  // if (milage === 1) {insuranceQuoteRate + 0.0015}
+  // if (milage === 2) {insuranceQuoteRate + 0.0025}
+  // if (milage === 3) {insuranceQuoteRate + 0.003}
+
+  const paramsWeight = {
+    coverage2: 0.0015,
+    coverage1: 0.003,
+    yearlyRate0: 0.0005,
+    deductible0: 0.003,
+    deductible1: 0.0025,
+    deductible2: 0.0015,
+    businessUse1: 0.003,
+    lease1: 0.0025,
+    milage1: 0.0015,
+    milage2: 0.0025,
+    milage3: 0.003,
+  };
+
+  // Quote Rate Calculcation based on chosen preferences
+  useEffect(() => {
+    if (insuranceParams.coverage == 2) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.coverage2);
+    } else if (insuranceParams.coverage == 1) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.coverage1);
+    }
+
+    if (insuranceParams.licenceYear == 0) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.yearlyRate0);
+    }
+
+    if (insuranceParams.deductible == 0) {
+      setInsuranceQuoteRate(insuranceQuoteRate + 0.0015);
+    } else if (insuranceParams.deductible == 1) {
+      setInsuranceQuoteRate(insuranceQuoteRate + 0.003);
+    } else if (insuranceParams.deductible == 2) {
+      setInsuranceQuoteRate(insuranceQuoteRate + 0.003);
+    }
+
+    if (insuranceParams.businessUse == 1) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.businessUse1);
+    }
+
+    if (insuranceParams.lease == 1) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.lease1);
+    }
+
+    if (insuranceParams.milage == 1) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage1);
+    } else if (insuranceParams.milage == 2) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage2);
+    } else if (insuranceParams.milage == 3) {
+      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage3);
+    }
+  }, [
+    insuranceParams.coverage,
+    insuranceParams.licenceYear,
+    insuranceParams.deductible,
+    insuranceParams.milage,
+    insuranceParams.tires,
+    insuranceParams.lease,
+    insuranceParams.businessUse,
+    insuranceParams.yearlyRate,
+  ]);
+
   const [insuranceQuoteYearly, setInsuranceQuoteYearly] = useState(
     parseFloat(carPrice) * insuranceQuoteRate
   );
@@ -48,8 +127,7 @@ export default function SecondStep({
     axios
       .get(
         apiBaseUrl +
-          `car/${carInfo.model.id}/${carInfo.year.id}/${carInfo.trim.id}
-        `
+          `car/${carInfo.model.id}/${carInfo.year.id}/${carInfo.trim.id}`
       )
       .then((data) => {
         console.log(data);
@@ -63,19 +141,19 @@ export default function SecondStep({
 
   const coverageItems = [
     {
-      label: "Maximum coverage",
+      label: "Comprehensive + collision",
       id: "1",
       value: 1,
     },
 
     {
-      label: "Middle coverage",
+      label: "Comprehensive coverage",
       id: "2",
       value: 2,
     },
 
     {
-      label: "Minimal coverage",
+      label: "Collision coverage",
       id: "3",
       value: 3,
     },
@@ -95,6 +173,32 @@ export default function SecondStep({
     },
   ];
 
+  const onChangeLeaseSwitch = (value, option) => {
+    setInsuranceParams({
+      coverage: insuranceParams.coverage,
+      licenceYear: insuranceParams.licenceYear,
+      deductible: insuranceParams.deductible,
+      milage: insuranceParams.milage,
+      tires: insuranceParams.tires,
+      lease: value,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: insuranceParams.yearlyRate,
+    });
+  };
+
+  const onChangeBusinessSwitch = (value, option) => {
+    setInsuranceParams({
+      coverage: insuranceParams.coverage,
+      licenceYear: insuranceParams.licenceYear,
+      deductible: insuranceParams.deductible,
+      milage: insuranceParams.milage,
+      tires: insuranceParams.tires,
+      lease: insuranceParams.lease,
+      businessUse: value,
+      yearlyRate: insuranceParams.yearlyRate,
+    });
+  };
+
   const onSelectTires = (value, option) => {
     setInsuranceParams({
       coverage: insuranceParams.coverage,
@@ -102,6 +206,9 @@ export default function SecondStep({
       deductible: insuranceParams.deductible,
       milage: insuranceParams.milage,
       tires: option.value,
+      lease: insuranceParams.lease,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: insuranceParams.yearlyRate,
     });
   };
 
@@ -112,6 +219,9 @@ export default function SecondStep({
       deductible: insuranceParams.deductible,
       milage: insuranceParams.milage,
       tires: insuranceParams.tires,
+      lease: insuranceParams.lease,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: insuranceParams.yearlyRate,
     });
   };
 
@@ -133,6 +243,9 @@ export default function SecondStep({
       deductible: value,
       milage: insuranceParams.milage,
       tires: insuranceParams.tires,
+      lease: insuranceParams.lease,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: insuranceParams.yearlyRate,
     });
   };
 
@@ -140,7 +253,7 @@ export default function SecondStep({
     0: "10 000 km",
     1: "15 000 km",
     2: "20 000 km",
-    3: "No limit",
+    3: "∞",
   };
 
   const onChangeMilage = (value, option) => {
@@ -150,6 +263,9 @@ export default function SecondStep({
       deductible: insuranceParams.deductible,
       milage: value,
       tires: insuranceParams.tires,
+      lease: insuranceParams.lease,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: insuranceParams.yearlyRate,
     });
   };
 
@@ -173,6 +289,19 @@ export default function SecondStep({
     });
   };
 
+  const onChangeInsurancePriceDisplay = (value, option) => {
+    setInsuranceParams({
+      coverage: option.value,
+      licenceYear: insuranceParams.licenceYear,
+      deductible: insuranceParams.deductible,
+      milage: insuranceParams.milage,
+      tires: insuranceParams.tires,
+      lease: insuranceParams.lease,
+      businessUse: insuranceParams.businessUse,
+      yearlyRate: value,
+    });
+  };
+
   return (
     <div className="calc__body">
       {" "}
@@ -180,7 +309,7 @@ export default function SecondStep({
         {" "}
         <form>
           {" "}
-          <h3>Driver details</h3>{" "}
+          <h4 className="small-title">Driver details</h4>{" "}
           <div className="row driver-details">
             {" "}
             <div className="col">
@@ -220,14 +349,24 @@ export default function SecondStep({
               />{" "}
             </div>{" "}
           </div>{" "}
-          {/* <h3>Choose insurance parameters</h3> */}
-          <h4>Vehicle price</h4>{" "}
+          <h4 className="small-title">Vehicle price</h4>{" "}
           <Input
             className="mb-20"
             name="priceInput"
             value={carPrice}
             onChange={(e) => onCarPriceInput(e.target.value)}
           />{" "}
+          <div className="mb-20 lease-switch-group">
+            {" "}
+            Is this vehicle leased? <Switch
+              onChange={onChangeLeaseSwitch}
+            />{" "}
+          </div>{" "}
+          <div className="mb-20 lease-switch-group">
+            {" "}
+            Vehicle is used for business{" "}
+            <Switch onChange={onChangeBusinessSwitch} />{" "}
+          </div>{" "}
           <Select
             className="mb-20"
             name="coverageOptions"
@@ -236,19 +375,21 @@ export default function SecondStep({
               width: 345,
             }}
             placeholder="Coverage"
+            defaultValue={3}
             onSelect={onSelectCoverage}
           />{" "}
           <Select
             className="mb-20"
             name="tiresOptions"
             options={tiresItems}
+            defaultValue={1}
             style={{
               width: 345,
             }}
             placeholder="Tires"
             onSelect={onSelectTires}
           />{" "}
-          <h4>Deductible</h4>{" "}
+          <h4 className="small-title">Deductible</h4>{" "}
           <Slider
             className="mb-20"
             name="deductible"
@@ -261,7 +402,7 @@ export default function SecondStep({
             }}
             onChange={onChangeDeductible}
           />{" "}
-          <h4>Annual milage</h4>{" "}
+          <h4 className="small-title">Annual milage</h4>{" "}
           <Slider
             className="mb-20"
             name="milageLimit"
@@ -277,10 +418,22 @@ export default function SecondStep({
       </div>{" "}
       <div className="calc__progress">
         {" "}
-        <p>Insurance price {insuranceQuoteYearly}</p> <h3></h3>{" "}
+        <p className="inactive-text">Insurance price</p>{" "}
+        <div className="lease-switch-group">
+          {/* <h4 className="small-title">${insuranceQuoteYearly}</h4> */}
+          <h4 className="small-title">{insuranceQuoteRate}</h4>
+          <Switch
+            checkedChildren="Yearly"
+            unCheckedChildren="Monthly"
+            defaultChecked
+            onChange={onChangeInsurancePriceDisplay}
+          />{" "}
+        </div>
+        <hr />
         <div>
           {" "}
-          <p>Your vehicle: car price: {carPrice}</p>{" "}
+          <p className="inactive-text totals-vehicle">Your vehicle:</p>{" "}
+          <p className="totals-vehicle">Brand Model Year Trim </p>
         </div>{" "}
       </div>{" "}
     </div>

@@ -16,6 +16,8 @@ export default function InsuranceContainer() {
     trim: null,
   });
 
+  const [nextButtonDisabled, setNextButtonDisabled] = useState("disabled");
+
   const [userData, setUserData] = useState({
     name: null,
     phone: null,
@@ -30,6 +32,8 @@ export default function InsuranceContainer() {
       carInfo={carInfo}
       setUserData={setUserData}
       userData={userData}
+      nextButtonDisabled={nextButtonDisabled}
+      setNextButtonDisabled={setNextButtonDisabled}
     />
   );
   let currentButtonGroup = (
@@ -37,7 +41,12 @@ export default function InsuranceContainer() {
       <p>
         <FontAwesomeIcon icon={faLock} /> Your information is secure
       </p>
-      <NextButton setCurrentStep={setCurrentStep} currentStep={currentStep} />
+      <NextButton
+        setCurrentStep={setCurrentStep}
+        currentStep={currentStep}
+        nextButtonDisabled={nextButtonDisabled}
+        setNextButtonDisabled={setNextButtonDisabled}
+      />
     </div>
   );
 

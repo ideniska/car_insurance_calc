@@ -1,5 +1,5 @@
 import "./FirstStep.css";
-import { AutoComplete, DatePicker, Input, Select } from "antd";
+import { AutoComplete, DatePicker, Input, Select, Badge } from "antd";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ export default function FirstStep({
   carInfo,
   setUserData,
   userData,
+  setNextButtonDisabled,
 }) {
   const _ = require("lodash");
   // const currentDomain = window.location.host;
@@ -35,6 +36,14 @@ export default function FirstStep({
   const [phone, setPhone] = useState("");
   const [userBirthDate, setUserBirthDate] = useState("");
 
+  // useStates to control badge change from +xx% to green dot status
+  const [showDotStatusModelField, setShowDotStatusModelField] = useState(false);
+  const [showDotStatusTrimField, setshowDotStatusTrimField] = useState(false);
+  const [showDotStatusNameField, setShowDotStatusNameField] = useState(false);
+  const [showDotStatusPhoneField, setShowDotStatusPhoneField] = useState(false);
+  const [showDotStatusBirthdateField, setShowDotStatusBirthdateField] =
+    useState(false);
+
   // Perecentage parameters for totalPercentage update
   const percentageParams = {
     modelYear: 10,
@@ -47,6 +56,10 @@ export default function FirstStep({
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
   const [totalPercentage, setTotalPercentage] = useState(50);
+
+  if (totalPercentage === 100) {
+    setNextButtonDisabled("");
+  }
 
   // get popular models
   useEffect(() => {
@@ -69,6 +82,7 @@ export default function FirstStep({
 
     getTrims(); // call API to get all trims for selected model year
     setCarDropdownFocus(false);
+    setShowDotStatusModelField(true);
     setTrimOptionsOpen(true); // open trims dropdown
   }, [carInfo.year]);
 
@@ -102,6 +116,7 @@ export default function FirstStep({
 
       setOptions(carWithYearOptions);
       setTotalPercentage(totalPercentage - percentageParams.modelYear);
+      setShowDotStatusModelField(false);
     }
 
     if (hasModel && !inputIncludesModel) {
@@ -137,9 +152,11 @@ export default function FirstStep({
   useEffect(() => {
     if (!prevName.current && name) {
       setTotalPercentage(totalPercentage + percentageParams.name);
+      setShowDotStatusNameField(true);
     }
     if (prevName.current && !name) {
       setTotalPercentage(totalPercentage - percentageParams.name);
+      setShowDotStatusNameField(false);
     }
     prevName.current = name;
   }, [name]);
@@ -148,10 +165,12 @@ export default function FirstStep({
   useEffect(() => {
     if (userData.phone && userData.phone.length === 11) {
       setTotalPercentage(totalPercentage + percentageParams.phone);
+      setShowDotStatusPhoneField(true);
     }
 
     if (prevPhone.current && !userData.phone) {
       setTotalPercentage(totalPercentage - percentageParams.phone);
+      setShowDotStatusPhoneField(false);
     }
 
     prevPhone.current = userData.phone;
@@ -161,9 +180,11 @@ export default function FirstStep({
   useEffect(() => {
     if (!prevBirthDate.current && userData.birthDate) {
       setTotalPercentage(totalPercentage + percentageParams.birthDate);
+      setShowDotStatusBirthdateField(true);
     }
     if (!userData.birthDate && prevBirthDate.current) {
       setTotalPercentage(totalPercentage - percentageParams.birthDate);
+      setShowDotStatusBirthdateField(false);
     }
     prevBirthDate.current = userData.birthDate;
   }, [userData.birthDate]);
@@ -194,6 +215,7 @@ export default function FirstStep({
       year: carInfo.year,
       trim: option,
     });
+    setshowDotStatusTrimField(true);
   };
 
   const onNameInput = (value, option) => {
@@ -290,72 +312,100 @@ export default function FirstStep({
           <p>
             Start typing the make and model of your car to select from the list
           </p>
-          <AutoComplete
-            id="make-model-year"
-            options={options}
-            style={{ width: 345, marginBottom: 20 }}
-            open={carDropdownFocus}
-            onSelect={onSelect}
-            // onDropdownVisibleChange={(visible) =>
-            //   setCarDropdownFocus(visible)
-            // }
-            onFocus={() => {
-              onChangeFocus(true);
-              // setTrimOptionsOpen(false);
-            }}
-            onBlur={() => {
-              onChangeFocus(false);
-            }}
-            onSearch={(text) => {
-              setCarMakeInput(text);
-            }}
-            placeholder="Make, model, year"
-            renderOption={(option) => {
-              return (
-                <>
-                  <div>{`${option.label}`}</div>
-                </>
-              );
-            }}
-          />
-
-          <Select
-            id="trim-select"
-            options={trimOptions}
-            open={trimOptionsOpen}
-            onDropdownVisibleChange={(visible) => setTrimOptionsOpen(visible)}
-            onSelect={onTrimSelect}
-            onFocus={() => {
-              setTrimOptionsOpen(true);
-            }}
-            onBlur={() => {
-              setTrimOptionsOpen(false);
-            }}
-            style={{ width: 345, marginBottom: 20 }}
-            placeholder="Trim"
-          />
+          <Badge
+            count={`${percentageParams.modelYear}%`}
+            color="#A3ECB3"
+            status="success"
+            dot={showDotStatusModelField}
+          >
+            <AutoComplete
+              id="make-model-year"
+              options={options}
+              style={{ width: 345, marginBottom: 20 }}
+              open={carDropdownFocus}
+              onSelect={onSelect}
+              // onDropdownVisibleChange={(visible) =>
+              //   setCarDropdownFocus(visible)
+              // }
+              onFocus={() => {
+                onChangeFocus(true);
+                // setTrimOptionsOpen(false);
+              }}
+              onBlur={() => {
+                onChangeFocus(false);
+              }}
+              onSearch={(text) => {
+                setCarMakeInput(text);
+              }}
+              placeholder="Make, model, year"
+              renderOption={(option) => {
+                return (
+                  <>
+                    <div>{`${option.label}`}</div>
+                  </>
+                );
+              }}
+            />
+          </Badge>
+          <Badge
+            count={`${percentageParams.trim}%`}
+            color="#A3ECB3"
+            dot={showDotStatusTrimField}
+          >
+            <Select
+              id="trim-select"
+              options={trimOptions}
+              open={trimOptionsOpen}
+              onDropdownVisibleChange={(visible) => setTrimOptionsOpen(visible)}
+              onSelect={onTrimSelect}
+              onFocus={() => {
+                setTrimOptionsOpen(true);
+              }}
+              onBlur={() => {
+                setTrimOptionsOpen(false);
+              }}
+              style={{ width: 345, marginBottom: 20 }}
+              placeholder="Trim"
+            />
+          </Badge>
           <h4>Driver details</h4>
-          <Input
-            name="nameInput"
-            style={{ width: 345, marginBottom: 20 }}
-            placeholder="John Smith"
-            onChange={(e) => onNameInput(e.target.value)}
-          />
-
-          <PhoneInput
-            className="phone-input-container"
-            inputClass="phone-input"
-            country={"ca"}
-            onChange={(value) => onPhoneInput(value)}
-          />
-
-          <DatePicker
-            name="birthDateInput"
-            defaultValue={dayjs("1987/12/01", dateFormat)}
-            format={dateFormat}
-            style={{ width: 345, marginBottom: 20 }}
-            onChange={onDateInput}
-          />
+          <Badge
+            count={`${percentageParams.name}%`}
+            color="#A3ECB3"
+            dot={showDotStatusNameField}
+          >
+            <Input
+              name="nameInput"
+              style={{ width: 345, marginBottom: 20 }}
+              placeholder="John Smith"
+              onChange={(e) => onNameInput(e.target.value)}
+            />
+          </Badge>
+          <Badge
+            count={`${percentageParams.phone}%`}
+            color="#A3ECB3"
+            dot={showDotStatusPhoneField}
+          >
+            <PhoneInput
+              className="phone-input-container"
+              inputClass="phone-input"
+              country={"ca"}
+              onChange={(value) => onPhoneInput(value)}
+            />
+          </Badge>
+          <Badge
+            count={`${percentageParams.birthDate}%`}
+            color="#A3ECB3"
+            dot={showDotStatusBirthdateField}
+          >
+            <DatePicker
+              name="birthDateInput"
+              defaultValue={dayjs("1987/12/01", dateFormat)}
+              format={dateFormat}
+              style={{ width: 345, marginBottom: 20 }}
+              onChange={onDateInput}
+            />
+          </Badge>
         </form>
       </div>
       <div className="calc__progress">

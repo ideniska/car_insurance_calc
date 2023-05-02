@@ -22,17 +22,17 @@
 }
 
 .mb-20 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .input-group {
     width: 100%;
 }
 
-/* .ant-slider-mark-text {
-    font-size: 6px;
-} */
-
+.lease-switch-group {
+    display: flex;
+    justify-content: space-between;
+}
 
 .phone-input {
     width: 345px !important;
@@ -42,4 +42,16 @@
 
 .phone-input-container {
     margin-bottom: 20px !important;
+}
+
+.inactive-text {
+    color: grey;
+}
+
+.totals-vehicle {
+    font-size: 12px;
+}
+
+.small-title {
+    font-size: 18px !important;
 }
