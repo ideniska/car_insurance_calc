@@ -13,7 +13,7 @@
     box-shadow: 0 12px 12px rgb(0 0 0 / 10%), 0 12px 12px rgb(0 0 0 / 4%), 0 12px 20px rgb(0 0 0 / 4%), 0 6px 5px rgb(0 0 0 / 4%), inset 0 5px 0 #3e4757;
     background-color: #fff;
     border-radius: 24px;
-    height: 654px;
+    height: 675px;
     width: 824px;
 }
 
@@ -84,14 +84,25 @@
 }
 
 .btn {
-    background-color: #1CB0DC;
-    border-style: none;
-    width: 200px;
+    background-color: #1CB0DC !important;
+    border-style: none !important;
+    width: 100px !important;
 }
 
 .button-group {
     margin-top: 20px;
     display: flex;
+    display: flex;
+    justify-content: space-between;
+    width: 345px;
+}
+
+.left-button {
+    order: 1;
+}
+
+.right-button {
+    order: 2;
 }
 
 .phone-input {

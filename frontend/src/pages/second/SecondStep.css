@@ -1,0 +1,45 @@
+.calc__body {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.calc__form {
+    width: 536px;
+}
+
+.calc__progress {
+    margin-left: 40px;
+    width: 248px;
+}
+
+.driver-details {
+    margin-bottom: 20px;
+}
+
+.date-picker {
+    width: 100%;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.input-group {
+    width: 100%;
+}
+
+/* .ant-slider-mark-text {
+    font-size: 6px;
+} */
+
+
+.phone-input {
+    width: 345px !important;
+
+    border-radius: 6px !important;
+}
+
+.phone-input-container {
+    margin-bottom: 20px !important;
+}
