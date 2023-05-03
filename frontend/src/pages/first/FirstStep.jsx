@@ -1,6 +1,6 @@
 import "./FirstStep.css";
 import { AutoComplete, DatePicker, Input, Select, Badge } from "antd";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -35,6 +35,11 @@ export default function FirstStep({
   const prevTrim = useRef();
   const [phone, setPhone] = useState("");
   const [userBirthDate, setUserBirthDate] = useState("");
+  // useMemo(() => {
+  //   id: item.id,
+  //   label: `${carInfo.year.value}`,
+  //   value: `${option.label}, ${item.year}`,
+  // }, [carInfo.year, carInfo.model])
 
   // useStates to control badge change from +xx% to green dot status
   const [showDotStatusModelField, setShowDotStatusModelField] = useState(false);
@@ -324,6 +329,7 @@ export default function FirstStep({
               style={{ width: 345, marginBottom: 20 }}
               open={carDropdownFocus}
               onSelect={onSelect}
+              value={carInfo.year}
               // onDropdownVisibleChange={(visible) =>
               //   setCarDropdownFocus(visible)
               // }
@@ -358,6 +364,7 @@ export default function FirstStep({
               open={trimOptionsOpen}
               onDropdownVisibleChange={(visible) => setTrimOptionsOpen(visible)}
               onSelect={onTrimSelect}
+              value={carInfo.trim}
               onFocus={() => {
                 setTrimOptionsOpen(true);
               }}
@@ -379,6 +386,7 @@ export default function FirstStep({
               style={{ width: 345, marginBottom: 20 }}
               placeholder="John Smith"
               onChange={(e) => onNameInput(e.target.value)}
+              value={userData.name}
             />
           </Badge>
           <Badge

@@ -25,18 +25,11 @@ export default function SecondStep({
   const [carPrice, setCarPrice] = useState();
   const [deductibleChoice, setDeductibleChoice] = useState();
 
-  const [insuranceParams, setInsuranceParams] = useState({
-    coverage: 3,
-    licenceYear: 1,
-    deductible: 3,
-    milage: 0,
-    tires: 1,
-    lease: 0,
-    businessUse: 0,
-    yearlyRate: 1,
-  });
+  const initialInsuranceQuoteRate = 1;
 
-  const [insuranceQuoteRate, setInsuranceQuoteRate] = useState(0.01);
+  const [insuranceQuoteRate, setInsuranceQuoteRate] = useState(
+    initialInsuranceQuoteRate
+  );
 
   // if (tires === 0) {insuranceQuoteRate + 0.0015}
   // if (coverage === 2) {insuranceQuoteRate + 0.0015}
@@ -50,69 +43,77 @@ export default function SecondStep({
   // if (milage === 2) {insuranceQuoteRate + 0.0025}
   // if (milage === 3) {insuranceQuoteRate + 0.003}
 
+  // const paramsWeight = {
+  //   coverage2: 0.0015,
+  //   coverage1: 0.003,
+  //   yearlyRate0: 0.0005,
+  //   deductible0: 0.003,
+  //   deductible1: 0.0025,
+  //   deductible2: 0.0015,
+  //   businessUse1: 0.003,
+  //   lease1: 0.0025,
+  //   milage1: 0.0015,
+  //   milage2: 0.0025,
+  //   milage3: 0.003,
+  // };
+
+  const [insuranceParams, setInsuranceParams] = useState({
+    coverage: 2,
+    licenceYear: 0,
+    deductible: 3,
+    milage: 0,
+    tires: 0,
+    isLeased: false,
+    isBusinessUse: false,
+    paymentType: true, // yearly
+  });
+
   const paramsWeight = {
-    coverage2: 0.0015,
-    coverage1: 0.003,
-    yearlyRate0: 0.0005,
-    deductible0: 0.003,
-    deductible1: 0.0025,
-    deductible2: 0.0015,
-    businessUse1: 0.003,
-    lease1: 0.0025,
-    milage1: 0.0015,
-    milage2: 0.0025,
-    milage3: 0.003,
+    coverage: [2, 1, 0],
+    licenceYear: [0],
+    deductible: [4, 3, 2, 0],
+    milage: [0, 1, 2, 3],
+    tires: [0, 1],
+    isLeased: [0, 1],
+    isBusinessUse: [0, 1],
+    paymentType: [1, 0],
   };
 
-  // Quote Rate Calculcation based on chosen preferences
+  // Quote Rate Calculation based on chosen preferences
   useEffect(() => {
-    if (insuranceParams.coverage == 2) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.coverage2);
-    } else if (insuranceParams.coverage == 1) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.coverage1);
-    }
+    let accumulator = 0;
 
-    if (insuranceParams.licenceYear == 0) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.yearlyRate0);
-    }
+    for (const key in insuranceParams) {
+      const element = insuranceParams[key];
+      if (typeof element === "boolean" && element === true) {
+        accumulator += paramsWeight[key][1];
+      }
+      if (typeof element === "boolean" && element === false) {
+        accumulator += paramsWeight[key][0];
+      }
 
-    if (insuranceParams.deductible == 0) {
-      setInsuranceQuoteRate(insuranceQuoteRate + 0.0015);
-    } else if (insuranceParams.deductible == 1) {
-      setInsuranceQuoteRate(insuranceQuoteRate + 0.003);
-    } else if (insuranceParams.deductible == 2) {
-      setInsuranceQuoteRate(insuranceQuoteRate + 0.003);
+      if (typeof element === "number") {
+        accumulator += paramsWeight[key][element];
+      }
     }
-
-    if (insuranceParams.businessUse == 1) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.businessUse1);
-    }
-
-    if (insuranceParams.lease == 1) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.lease1);
-    }
-
-    if (insuranceParams.milage == 1) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage1);
-    } else if (insuranceParams.milage == 2) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage2);
-    } else if (insuranceParams.milage == 3) {
-      setInsuranceQuoteRate(insuranceQuoteRate + paramsWeight.milage3);
-    }
+    setInsuranceQuoteRate(initialInsuranceQuoteRate + accumulator);
   }, [
     insuranceParams.coverage,
     insuranceParams.licenceYear,
     insuranceParams.deductible,
     insuranceParams.milage,
     insuranceParams.tires,
-    insuranceParams.lease,
-    insuranceParams.businessUse,
-    insuranceParams.yearlyRate,
+    insuranceParams.isLeased,
+    insuranceParams.isBusinessUse,
+    insuranceParams.paymentType,
   ]);
 
-  const [insuranceQuoteYearly, setInsuranceQuoteYearly] = useState(
-    parseFloat(carPrice) * insuranceQuoteRate
-  );
+  const [insuranceQuoteYearly, setInsuranceQuoteYearly] = useState(0);
+
+  useEffect(() => {
+    setInsuranceQuoteYearly(parseFloat(carPrice) * insuranceQuoteRate);
+  }, [carPrice, insuranceQuoteRate]);
+
   const [insuranceQuoteMonthly, setInsuranceQuoteMonthly] = useState(
     ((parseFloat(carPrice) * insuranceQuoteRate) / 12) * 1.05
   );
@@ -143,110 +144,45 @@ export default function SecondStep({
     {
       label: "Comprehensive + collision",
       id: "1",
-      value: 1,
+      value: 0,
     },
 
     {
       label: "Comprehensive coverage",
       id: "2",
-      value: 2,
+      value: 1,
     },
 
     {
       label: "Collision coverage",
       id: "3",
-      value: 3,
+      value: 2,
     },
   ];
+
+  const dropdownCoverageOptions = {
+    coverageItems,
+  };
 
   const tiresItems = [
     {
       label: "Winter tires",
       id: "1",
-      value: 1,
+      value: 0,
     },
 
     {
       label: "All season tires",
       id: "2",
-      value: 0,
+      value: 1,
     },
   ];
-
-  const onChangeLeaseSwitch = (value, option) => {
-    setInsuranceParams({
-      coverage: insuranceParams.coverage,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
-      milage: insuranceParams.milage,
-      tires: insuranceParams.tires,
-      lease: value,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: insuranceParams.yearlyRate,
-    });
-  };
-
-  const onChangeBusinessSwitch = (value, option) => {
-    setInsuranceParams({
-      coverage: insuranceParams.coverage,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
-      milage: insuranceParams.milage,
-      tires: insuranceParams.tires,
-      lease: insuranceParams.lease,
-      businessUse: value,
-      yearlyRate: insuranceParams.yearlyRate,
-    });
-  };
-
-  const onSelectTires = (value, option) => {
-    setInsuranceParams({
-      coverage: insuranceParams.coverage,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
-      milage: insuranceParams.milage,
-      tires: option.value,
-      lease: insuranceParams.lease,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: insuranceParams.yearlyRate,
-    });
-  };
-
-  const onSelectCoverage = (value, option) => {
-    setInsuranceParams({
-      coverage: option.value,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
-      milage: insuranceParams.milage,
-      tires: insuranceParams.tires,
-      lease: insuranceParams.lease,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: insuranceParams.yearlyRate,
-    });
-  };
-
-  const dropdownCoverageOptions = {
-    coverageItems,
-  };
 
   const deductibleSliderMarks = {
     0: "$0",
     1: "$500",
     2: "$1000",
     3: "$1500",
-  };
-
-  const onChangeDeductible = (value, option) => {
-    setInsuranceParams({
-      coverage: insuranceParams.coverage,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: value,
-      milage: insuranceParams.milage,
-      tires: insuranceParams.tires,
-      lease: insuranceParams.lease,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: insuranceParams.yearlyRate,
-    });
   };
 
   const milageSliderMarks = {
@@ -256,117 +192,121 @@ export default function SecondStep({
     3: "∞",
   };
 
+  const onChangeLeaseSwitch = (value, option) => {
+    setInsuranceParams({
+      ...insuranceParams,
+      isLeased: value,
+    });
+  };
+
+  const onChangeBusinessSwitch = (value, option) => {
+    setInsuranceParams({
+      ...insuranceParams,
+      isBusinessUse: value,
+    });
+  };
+
+  const onSelectTires = (value, option) => {
+    setInsuranceParams({
+      ...insuranceParams,
+      tires: option.value,
+    });
+  };
+
+  const onSelectCoverage = (value, option) => {
+    setInsuranceParams({
+      ...insuranceParams,
+      coverage: option.value,
+    });
+  };
+
+  const onChangeDeductible = (value, option) => {
+    setInsuranceParams({
+      ...insuranceParams,
+      deductible: value,
+    });
+  };
+
   const onChangeMilage = (value, option) => {
     setInsuranceParams({
-      coverage: insuranceParams.coverage,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
+      ...insuranceParams,
       milage: value,
-      tires: insuranceParams.tires,
-      lease: insuranceParams.lease,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: insuranceParams.yearlyRate,
     });
   };
 
   const onInputDriverLicence = (value, option) => {
     setUserData({
-      name: userData.name,
-      phone: userData.phone,
-      birthDate: userData.birthDate,
+      ...insuranceParams,
       driverLicence: value,
-      yearIssued: userData.yearIssued,
     });
   };
 
   const onInputLicenceYear = (value, option) => {
     setUserData({
-      name: userData.name,
-      phone: userData.phone,
-      birthDate: userData.birthDate,
-      driverLicence: userData.driverLicence,
-      yearIssued: value,
+      ...insuranceParams,
+      licenceYear: value,
     });
   };
 
-  const onChangeInsurancePriceDisplay = (value, option) => {
+  const onChangeInsurancePriceDisplay = (value) => {
     setInsuranceParams({
-      coverage: option.value,
-      licenceYear: insuranceParams.licenceYear,
-      deductible: insuranceParams.deductible,
-      milage: insuranceParams.milage,
-      tires: insuranceParams.tires,
-      lease: insuranceParams.lease,
-      businessUse: insuranceParams.businessUse,
-      yearlyRate: value,
+      ...insuranceParams,
+      paymentType: value,
     });
   };
 
   return (
     <div className="calc__body">
-      {" "}
       <div className="calc__form">
-        {" "}
         <form>
-          {" "}
-          <h4 className="small-title">Driver details</h4>{" "}
+          <h4 className="small-title">Driver details</h4>
           <div className="row driver-details">
-            {" "}
             <div className="col">
-              {" "}
               <Input
                 name="nameInput"
                 placeholder={userData.name}
                 value={userData.name}
-              />{" "}
-            </div>{" "}
+              />
+            </div>
             <div className="col">
-              {" "}
               <DatePicker
                 name="birthDateInput"
                 value={dayjs(userData.birthDate, dateFormat)}
                 format={dateFormat}
                 className="date-picker"
-              />{" "}
-            </div>{" "}
-          </div>{" "}
+              />
+            </div>
+          </div>
           <div className="row driver-details">
-            {" "}
             <div className="col">
-              {" "}
               <Input
                 name="driverLicenceInput"
                 placeholder="Licence number"
                 onChange={(e) => onInputDriverLicence(e.target.value)}
-              />{" "}
-            </div>{" "}
+              />
+            </div>
             <div className="col">
-              {" "}
               <Input
                 name="driverLicenceYearInput"
                 placeholder="Year issued"
                 onChange={(e) => onInputLicenceYear(e.target.value)}
-              />{" "}
-            </div>{" "}
-          </div>{" "}
-          <h4 className="small-title">Vehicle price</h4>{" "}
+              />
+            </div>
+          </div>
+          <h4 className="small-title">Vehicle price</h4>
           <Input
             className="mb-20"
             name="priceInput"
             value={carPrice}
             onChange={(e) => onCarPriceInput(e.target.value)}
-          />{" "}
+          />
           <div className="mb-20 lease-switch-group">
-            {" "}
-            Is this vehicle leased? <Switch
-              onChange={onChangeLeaseSwitch}
-            />{" "}
-          </div>{" "}
+            Is this vehicle leased? <Switch onChange={onChangeLeaseSwitch} />
+          </div>
           <div className="mb-20 lease-switch-group">
-            {" "}
-            Vehicle is used for business{" "}
-            <Switch onChange={onChangeBusinessSwitch} />{" "}
-          </div>{" "}
+            Vehicle is used for business
+            <Switch onChange={onChangeBusinessSwitch} />
+          </div>
           <Select
             className="mb-20"
             name="coverageOptions"
@@ -375,21 +315,21 @@ export default function SecondStep({
               width: 345,
             }}
             placeholder="Coverage"
-            defaultValue={3}
+            defaultValue={2}
             onSelect={onSelectCoverage}
-          />{" "}
+          />
           <Select
             className="mb-20"
             name="tiresOptions"
             options={tiresItems}
-            defaultValue={1}
+            defaultValue={0}
             style={{
               width: 345,
             }}
             placeholder="Tires"
             onSelect={onSelectTires}
-          />{" "}
-          <h4 className="small-title">Deductible</h4>{" "}
+          />
+          <h4 className="small-title">Deductible</h4>
           <Slider
             className="mb-20"
             name="deductible"
@@ -401,8 +341,8 @@ export default function SecondStep({
               formatter: null,
             }}
             onChange={onChangeDeductible}
-          />{" "}
-          <h4 className="small-title">Annual milage</h4>{" "}
+          />
+          <h4 className="small-title">Annual milage</h4>
           <Slider
             className="mb-20"
             name="milageLimit"
@@ -413,29 +353,27 @@ export default function SecondStep({
               formatter: null,
             }}
             onChange={onChangeMilage}
-          />{" "}
-        </form>{" "}
-      </div>{" "}
+          />
+        </form>
+      </div>
       <div className="calc__progress">
-        {" "}
-        <p className="inactive-text">Insurance price</p>{" "}
+        <p className="inactive-text">Insurance price</p>
         <div className="lease-switch-group">
-          {/* <h4 className="small-title">${insuranceQuoteYearly}</h4> */}
+          <h4 className="small-title">${insuranceQuoteYearly}</h4>
           <h4 className="small-title">{insuranceQuoteRate}</h4>
           <Switch
             checkedChildren="Yearly"
             unCheckedChildren="Monthly"
             defaultChecked
             onChange={onChangeInsurancePriceDisplay}
-          />{" "}
+          />
         </div>
         <hr />
         <div>
-          {" "}
-          <p className="inactive-text totals-vehicle">Your vehicle:</p>{" "}
+          <p className="inactive-text totals-vehicle">Your vehicle:</p>
           <p className="totals-vehicle">Brand Model Year Trim </p>
-        </div>{" "}
-      </div>{" "}
+        </div>
+      </div>
     </div>
   );
 }

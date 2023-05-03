@@ -32,7 +32,8 @@ export default function InsuranceContainer() {
       carInfo={carInfo}
       setUserData={setUserData}
       userData={userData}
-      nextButtonDisabled={nextButtonDisabled}
+      //   nextButtonDisabled={nextButtonDisabled}
+      nextButtonDisabled={false}
       setNextButtonDisabled={setNextButtonDisabled}
     />
   );
@@ -44,7 +45,8 @@ export default function InsuranceContainer() {
       <NextButton
         setCurrentStep={setCurrentStep}
         currentStep={currentStep}
-        nextButtonDisabled={nextButtonDisabled}
+        // nextButtonDisabled={nextButtonDisabled}
+        nextButtonDisabled={false}
         setNextButtonDisabled={setNextButtonDisabled}
       />
     </div>
