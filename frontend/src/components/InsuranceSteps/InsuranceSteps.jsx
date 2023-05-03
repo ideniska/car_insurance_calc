@@ -1,4 +1,5 @@
 import React from "react";
+import "./InsuranceSteps.css";
 
 export default function InsuranceSteps({ currentStep }) {
   let activeStep = (

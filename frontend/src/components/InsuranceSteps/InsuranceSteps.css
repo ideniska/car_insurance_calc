@@ -1,0 +1,46 @@
+.calc__steps {
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 30px;
+
+}
+
+.calc__steps__step {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.calc__steps__step p {
+    margin: 0;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.not-active-text {
+    color: lightgray;
+}
+
+
+.circle-active,
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.circle-active {
+    background-color: #1F4E75;
+}
+
+.circle {
+    background-color: lightgray;
+}

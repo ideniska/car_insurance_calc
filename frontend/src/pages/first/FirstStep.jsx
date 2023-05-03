@@ -16,8 +16,8 @@ export default function FirstStep({
 }) {
   const _ = require("lodash");
   // const currentDomain = window.location.host;
-  const apiBaseUrl = "http://localhost:9001/api/";
-  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
+  // const apiBaseUrl = "http://localhost:3000/api/";
+  const apiBaseUrl = "http://127.0.0.1:8000/api/";
   // const apiBaseUrl = window.location.host + "/api/";
   const [carMakeInput, setCarMakeInput] = useState("");
   const [options, setOptions] = useState([]);
@@ -27,19 +27,14 @@ export default function FirstStep({
   const [isMounted, setIsMounted] = useState(false);
   const [carWithYearOptions, setCarWithYearOptions] = useState(null);
   const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
-  const [selectedTrim, setSelectedTrim] = useState(""); // user selected trim
+  // const [selectedTrim, setSelectedTrim] = useState(""); // user selected trim
   const [name, setName] = useState("");
   const prevName = useRef();
   const prevPhone = useRef();
   const prevBirthDate = useRef();
   const prevTrim = useRef();
-  const [phone, setPhone] = useState("");
-  const [userBirthDate, setUserBirthDate] = useState("");
-  // useMemo(() => {
-  //   id: item.id,
-  //   label: `${carInfo.year.value}`,
-  //   value: `${option.label}, ${item.year}`,
-  // }, [carInfo.year, carInfo.model])
+  // const [phone, setPhone] = useState("");
+  // const [userBirthDate, setUserBirthDate] = useState("");
 
   // useStates to control badge change from +xx% to green dot status
   const [showDotStatusModelField, setShowDotStatusModelField] = useState(false);
@@ -330,12 +325,8 @@ export default function FirstStep({
               open={carDropdownFocus}
               onSelect={onSelect}
               value={carInfo.year}
-              // onDropdownVisibleChange={(visible) =>
-              //   setCarDropdownFocus(visible)
-              // }
               onFocus={() => {
                 onChangeFocus(true);
-                // setTrimOptionsOpen(false);
               }}
               onBlur={() => {
                 onChangeFocus(false);
@@ -399,6 +390,7 @@ export default function FirstStep({
               inputClass="phone-input"
               country={"ca"}
               onChange={(value) => onPhoneInput(value)}
+              value={userData.phone}
             />
           </Badge>
           <Badge
@@ -408,10 +400,11 @@ export default function FirstStep({
           >
             <DatePicker
               name="birthDateInput"
-              defaultValue={dayjs("1987/12/01", dateFormat)}
+              // defaultValue={dayjs("1987/12/01", dateFormat)}
               format={dateFormat}
               style={{ width: 345, marginBottom: 20 }}
               onChange={onDateInput}
+              value={dayjs(userData.birthDate, dateFormat)}
             />
           </Badge>
         </form>
@@ -442,5 +435,3 @@ export default function FirstStep({
     </div>
   );
 }
-
-// TODO make NEXT button disabled if not 100% info

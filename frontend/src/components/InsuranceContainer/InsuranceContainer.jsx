@@ -1,10 +1,11 @@
 import React from "react";
+import "./InsuranceContainer.css";
 import { useState, useEffect } from "react";
-import InsuranceSteps from "./InsuranceSteps";
-import FirstStep from "../pages/first/FirstStep";
-import SecondStep from "../pages/second/SecondStep";
-import NextButton from "./InsuranceStepsNextButton";
-import PrevButton from "./InsuranceStepsPrevButton";
+import InsuranceSteps from "../InsuranceSteps/InsuranceSteps";
+import FirstStep from "../../pages/first/FirstStep";
+import SecondStep from "../../pages/second/SecondStep";
+import NextButton from "../InsuranceStepsNextButton";
+import PrevButton from "../InsuranceStepsPrevButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
@@ -21,7 +22,7 @@ export default function InsuranceContainer() {
   const [userData, setUserData] = useState({
     name: null,
     phone: null,
-    birthDate: null,
+    birthDate: "1987/12/01",
     driverLicence: null,
     yearIssued: null,
   });
@@ -32,8 +33,7 @@ export default function InsuranceContainer() {
       carInfo={carInfo}
       setUserData={setUserData}
       userData={userData}
-      //   nextButtonDisabled={nextButtonDisabled}
-      nextButtonDisabled={false}
+      nextButtonDisabled={nextButtonDisabled}
       setNextButtonDisabled={setNextButtonDisabled}
     />
   );
@@ -45,32 +45,11 @@ export default function InsuranceContainer() {
       <NextButton
         setCurrentStep={setCurrentStep}
         currentStep={currentStep}
-        // nextButtonDisabled={nextButtonDisabled}
-        nextButtonDisabled={false}
+        nextButtonDisabled={nextButtonDisabled}
         setNextButtonDisabled={setNextButtonDisabled}
       />
     </div>
   );
-
-  //   useEffect(() => {
-  //     if (currentStep === 1) {
-  //       currentStepComponent = (
-  //         // <SecondStep setCarInfo={setCarInfo} carInfo={carInfo} />
-  //         <div>Second Step</div>
-  //       );
-  //     }
-  //     // if (currentStep === 2) {
-  //     //   currentStepComponent = (
-  //     //     <ThirdStep setCarInfo={setCarInfo} carInfo={carInfo} />
-  //     //   );
-  //     // }
-  //     // if (currentStep === 3) {
-  //     //   currentStepComponent = <FourthStep />;
-  //     // }
-  //     currentStepComponent = (
-  //       <FirstStep setCarInfo={setCarInfo} carInfo={carInfo} />
-  //     );
-  //   }, [currentStep]);
 
   if (currentStep === 1) {
     currentStepComponent = (

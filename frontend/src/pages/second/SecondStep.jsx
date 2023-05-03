@@ -1,17 +1,8 @@
 import "./SecondStep.css";
 
-import {
-  DatePicker,
-  Input,
-  Select,
-  Dropdown,
-  Slider,
-  Button,
-  Space,
-  Switch,
-} from "antd";
+import { DatePicker, Input, Select, Slider, Switch } from "antd";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import "react-phone-input-2/lib/semantic-ui.css";
@@ -25,37 +16,11 @@ export default function SecondStep({
   const [carPrice, setCarPrice] = useState();
   const [deductibleChoice, setDeductibleChoice] = useState();
 
-  const initialInsuranceQuoteRate = 1;
+  const initialInsuranceQuoteRate = 0.04;
 
   const [insuranceQuoteRate, setInsuranceQuoteRate] = useState(
     initialInsuranceQuoteRate
   );
-
-  // if (tires === 0) {insuranceQuoteRate + 0.0015}
-  // if (coverage === 2) {insuranceQuoteRate + 0.0015}
-  // if (coverage === 1) {insuranceQuoteRate + 0.003}
-  // if (deductible === 0) {insuranceQuoteRate + 0.003}
-  // if (deductible === 1) {insuranceQuoteRate + 0.0025}
-  // if (deductible === 2) {insuranceQuoteRate + 0.0015}
-  // if (businessUse === 1) {insuranceQuoteRate + 0.003}
-  // if (lease === 1) {insuranceQuoteRate + 0.0025}
-  // if (milage === 1) {insuranceQuoteRate + 0.0015}
-  // if (milage === 2) {insuranceQuoteRate + 0.0025}
-  // if (milage === 3) {insuranceQuoteRate + 0.003}
-
-  // const paramsWeight = {
-  //   coverage2: 0.0015,
-  //   coverage1: 0.003,
-  //   yearlyRate0: 0.0005,
-  //   deductible0: 0.003,
-  //   deductible1: 0.0025,
-  //   deductible2: 0.0015,
-  //   businessUse1: 0.003,
-  //   lease1: 0.0025,
-  //   milage1: 0.0015,
-  //   milage2: 0.0025,
-  //   milage3: 0.003,
-  // };
 
   const [insuranceParams, setInsuranceParams] = useState({
     coverage: 2,
@@ -69,14 +34,14 @@ export default function SecondStep({
   });
 
   const paramsWeight = {
-    coverage: [2, 1, 0],
+    coverage: [0.005, 0.0025, 0],
     licenceYear: [0],
-    deductible: [4, 3, 2, 0],
-    milage: [0, 1, 2, 3],
-    tires: [0, 1],
-    isLeased: [0, 1],
-    isBusinessUse: [0, 1],
-    paymentType: [1, 0],
+    deductible: [0.005, 0.0025, 0.0015, 0],
+    milage: [0, 0.0015, 0.0025, 0.0035],
+    tires: [0, 0.0035],
+    isLeased: [0, 0.0035],
+    isBusinessUse: [0, 0.005],
+    paymentType: [0.0025, 0],
   };
 
   // Quote Rate Calculation based on chosen preferences
@@ -108,20 +73,23 @@ export default function SecondStep({
     insuranceParams.paymentType,
   ]);
 
-  const [insuranceQuoteYearly, setInsuranceQuoteYearly] = useState(0);
+  const [insuranceQuote, setInsuranceQuote] = useState(0);
 
   useEffect(() => {
-    setInsuranceQuoteYearly(parseFloat(carPrice) * insuranceQuoteRate);
+    setInsuranceQuote(carPrice * insuranceQuoteRate);
   }, [carPrice, insuranceQuoteRate]);
 
-  const [insuranceQuoteMonthly, setInsuranceQuoteMonthly] = useState(
-    ((parseFloat(carPrice) * insuranceQuoteRate) / 12) * 1.05
-  );
+  useEffect(() => {
+    if (insuranceParams.paymentType === true) {
+      setInsuranceQuote(carPrice * insuranceQuoteRate);
+    } else {
+      setInsuranceQuote((carPrice * insuranceQuoteRate) / 12);
+    }
+  }, [insuranceParams.paymentType, carPrice, insuranceQuoteRate]);
 
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
-  const apiBaseUrl = "http://127.0.0.1:8000//api/";
-  // const [isMounted, setIsMounted] = useState(false);
+  const apiBaseUrl = "http://127.0.0.1:8000/api/";
 
   // const apiBaseUrl = "http://localhost:8000/api/";
   useEffect(() => {
@@ -359,8 +327,8 @@ export default function SecondStep({
       <div className="calc__progress">
         <p className="inactive-text">Insurance price</p>
         <div className="lease-switch-group">
-          <h4 className="small-title">${insuranceQuoteYearly}</h4>
-          <h4 className="small-title">{insuranceQuoteRate}</h4>
+          <h4 className="small-title">${insuranceQuote.toFixed(2)}</h4>
+          {/* <h4 className="small-title">{insuranceQuoteRate}</h4> */}
           <Switch
             checkedChildren="Yearly"
             unCheckedChildren="Monthly"
@@ -371,7 +339,9 @@ export default function SecondStep({
         <hr />
         <div>
           <p className="inactive-text totals-vehicle">Your vehicle:</p>
-          <p className="totals-vehicle">Brand Model Year Trim </p>
+          <p className="totals-vehicle">
+            {carInfo.year.value} {carInfo.trim.value}
+          </p>
         </div>
       </div>
     </div>

@@ -1,10 +1,8 @@
 import "./App.css";
-import InsuranceContainer from "./components/InsuranceContainer";
-import FirstPage from "./pages/first/FirstStep";
-import SecondPage from "./pages/second/SecondStep";
+import InsuranceContainer from "./components/InsuranceContainer/InsuranceContainer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { BrowserRouter, Switch, Route, Link, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
