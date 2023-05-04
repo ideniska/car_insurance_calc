@@ -12,6 +12,7 @@ export default function SecondStep({
   carInfo,
   userData,
   setUserData,
+  apiBaseUrl,
 }) {
   const [carPrice, setCarPrice] = useState();
   const [deductibleChoice, setDeductibleChoice] = useState();
@@ -89,7 +90,7 @@ export default function SecondStep({
 
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
-  const apiBaseUrl = "http://127.0.0.1:8000/api/";
+  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
 
   // const apiBaseUrl = "http://localhost:8000/api/";
   useEffect(() => {

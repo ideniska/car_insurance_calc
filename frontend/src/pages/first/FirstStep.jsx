@@ -13,10 +13,11 @@ export default function FirstStep({
   setUserData,
   userData,
   setNextButtonDisabled,
+  apiBaseUrl,
 }) {
   const _ = require("lodash");
   // const apiBaseUrl = "http://127.0.0.1:8000/api/";
-  const apiBaseUrl = window.location.href + "api/";
+  // const apiBaseUrl = window.location.href + "api/";
   console.log("apibaseurl:", apiBaseUrl);
   const [carMakeInput, setCarMakeInput] = useState("");
   const [options, setOptions] = useState([]);
