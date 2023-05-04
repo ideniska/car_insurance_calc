@@ -90,9 +90,7 @@ export default function SecondStep({
 
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
-  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
 
-  // const apiBaseUrl = "http://localhost:8000/api/";
   useEffect(() => {
     axios
       .get(
@@ -100,7 +98,6 @@ export default function SecondStep({
           `car/${carInfo.model.id}/${carInfo.year.id}/${carInfo.trim.id}`
       )
       .then((data) => {
-        console.log(data);
         setCarPrice(data.data.car_price);
       });
   }, []);
