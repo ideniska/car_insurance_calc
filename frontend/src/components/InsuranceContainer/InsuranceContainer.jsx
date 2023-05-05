@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function InsuranceContainer() {
-  // const apiBaseUrl = window.location.href + "api/";
-  const apiBaseUrl = "http://127.0.0.1:8000/api/";
+  const apiBaseUrl = window.location.href + "api/";
+  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
   const [currentStep, setCurrentStep] = useState(0);
   const [carInfo, setCarInfo] = useState({
     model: null,
