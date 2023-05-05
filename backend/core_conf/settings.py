@@ -113,4 +113,16 @@ REST_FRAMEWORK = {
         )
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_HOSTS = [
+    "http://localhost",
+    "http://localhost:9001",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1",
+    "https://calc.dendev.ca",
+]
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://calc.dendev.ca",
+    "http://localhost:9001",
+]
