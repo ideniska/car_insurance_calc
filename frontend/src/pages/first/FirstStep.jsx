@@ -14,6 +14,13 @@ export default function FirstStep({
   userData,
   setNextButtonDisabled,
   apiBaseUrl,
+  totalPercentage,
+  setTotalPercentage,
+  prevBirthDate,
+  prevName,
+  prevPhone,
+  prevTrim,
+  prevYear,
 }) {
   const _ = require("lodash");
 
@@ -27,10 +34,9 @@ export default function FirstStep({
   const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
   // const [selectedTrim, setSelectedTrim] = useState(""); // user selected trim
   const [name, setName] = useState("");
-  const prevName = useRef();
-  const prevPhone = useRef();
-  const prevBirthDate = useRef();
-  const prevTrim = useRef();
+  // const prevBirthDate = useRef();
+  // const prevTrim = useRef();
+  // const prevYear = useRef();
   // const [phone, setPhone] = useState("");
   // const [userBirthDate, setUserBirthDate] = useState("");
 
@@ -46,14 +52,16 @@ export default function FirstStep({
   const percentageParams = {
     modelYear: 10,
     trim: 4,
-    name: 12,
+    name: 11,
     phone: 12,
-    birthDate: 12,
+    birthDate: 13,
+    // name: 12,
+    // phone: 12,
+    // birthDate: 12,
   };
 
   const { RangePicker } = DatePicker;
   const dateFormat = "YYYY/MM/DD";
-  const [totalPercentage, setTotalPercentage] = useState(50);
 
   if (totalPercentage === 100) {
     setNextButtonDisabled("");
@@ -110,10 +118,10 @@ export default function FirstStep({
       setCarInfo({
         model: carInfo.model,
         year: null,
+        trim: carInfo.trim,
       });
 
       setOptions(carWithYearOptions);
-      setTotalPercentage(totalPercentage - percentageParams.modelYear);
       setShowDotStatusModelField(false);
     }
 
@@ -121,6 +129,7 @@ export default function FirstStep({
       setCarInfo({
         model: null,
         year: carInfo.year,
+        trim: carInfo.trim,
       });
 
       debauncedSearchModels(carMakeInput);
@@ -129,9 +138,15 @@ export default function FirstStep({
 
   // Increase totalPercentage when model year is selected
   useEffect(() => {
-    if (carInfo.model && carInfo.year) {
+    if (!prevYear.current && carInfo.model && carInfo.year) {
       setTotalPercentage(totalPercentage + percentageParams.modelYear);
     }
+
+    if (!carInfo.year && prevYear.current) {
+      setTotalPercentage(totalPercentage - percentageParams.modelYear);
+    }
+
+    prevYear.current = carInfo.year;
   }, [carInfo.model, carInfo.year]);
 
   // Increase totalPercentage when trim is selected
@@ -148,20 +163,20 @@ export default function FirstStep({
 
   // Increase total percentage if name input is filled
   useEffect(() => {
-    if (!prevName.current && name) {
+    if (!prevName.current && userData.name) {
       setTotalPercentage(totalPercentage + percentageParams.name);
       setShowDotStatusNameField(true);
     }
-    if (prevName.current && !name) {
+    if (prevName.current && !userData.name) {
       setTotalPercentage(totalPercentage - percentageParams.name);
       setShowDotStatusNameField(false);
     }
-    prevName.current = name;
-  }, [name]);
+    prevName.current = userData.name;
+  }, [userData.name]);
 
   // Increase totalPercentage when phone is filled
   useEffect(() => {
-    if (userData.phone && userData.phone.length === 11) {
+    if (!prevPhone.current && userData.phone) {
       setTotalPercentage(totalPercentage + percentageParams.phone);
       setShowDotStatusPhoneField(true);
     }
@@ -194,6 +209,7 @@ export default function FirstStep({
       setCarInfo({
         model: option,
         year: carInfo.year,
+        trim: carInfo.trim,
       });
 
       getModelYears(option);
@@ -203,6 +219,7 @@ export default function FirstStep({
     setCarInfo({
       model: carInfo.model,
       year: option,
+      trim: carInfo.trim,
     });
   };
 
@@ -217,7 +234,7 @@ export default function FirstStep({
   };
 
   const onNameInput = (value, option) => {
-    setName(value);
+    // setName(value);
     setUserData({
       name: value,
       phone: userData.phone,
@@ -322,7 +339,7 @@ export default function FirstStep({
               style={{ width: 345, marginBottom: 20 }}
               open={carDropdownFocus}
               onSelect={onSelect}
-              value={carInfo.year}
+              value={carInfo.year || carInfo.model || carMakeInput}
               onFocus={() => {
                 onChangeFocus(true);
               }}
@@ -402,7 +419,11 @@ export default function FirstStep({
               format={dateFormat}
               style={{ width: 345, marginBottom: 20 }}
               onChange={onDateInput}
-              value={dayjs(userData.birthDate, dateFormat)}
+              value={
+                userData.birthDate
+                  ? dayjs(userData.birthDate, dateFormat)
+                  : null
+              }
             />
           </Badge>
         </form>
