@@ -77,7 +77,11 @@ export default function SecondStep({
   const [insuranceQuote, setInsuranceQuote] = useState(0);
 
   useEffect(() => {
-    setInsuranceQuote(carPrice * insuranceQuoteRate);
+    if (carPrice) {
+      setInsuranceQuote(carPrice * insuranceQuoteRate);
+    } else {
+      setInsuranceQuote("Input car price");
+    }
   }, [carPrice, insuranceQuoteRate]);
 
   useEffect(() => {
@@ -326,7 +330,6 @@ export default function SecondStep({
         <p className="inactive-text">Insurance price</p>
         <div className="lease-switch-group">
           <h4 className="small-title">${insuranceQuote.toFixed(2)}</h4>
-          {/* <h4 className="small-title">{insuranceQuoteRate}</h4> */}
           <Switch
             checkedChildren="Yearly"
             unCheckedChildren="Monthly"
