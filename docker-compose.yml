@@ -3,6 +3,7 @@ services:
     build:
       context: ./backend
     command: gunicorn core_conf.wsgi --bind 0.0.0.0:8000
+    restart: always
     volumes:
       - static_data:/app/static
       - media_data:/app/media
@@ -12,6 +13,7 @@ services:
   frontend:
     build:
       context: ./frontend
+    restart: always
     volumes:
       - react_build:/frontend/build
 
