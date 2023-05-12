@@ -21,32 +21,32 @@ export default function FirstStep({
   prevPhone,
   prevTrim,
   prevYear,
+  carMakeOptions,
+  carWithYearOptions,
+  setCarWithYearOptions,
+  setCarMakeOptions,
+  showDotStatusModelField,
+  setShowDotStatusModelField,
+  showDotStatusTrimField,
+  setshowDotStatusTrimField,
+  showDotStatusNameField,
+  setShowDotStatusNameField,
+  showDotStatusPhoneField,
+  setShowDotStatusPhoneField,
+  showDotStatusBirthdateField,
+  setShowDotStatusBirthdateField,
 }) {
   const _ = require("lodash");
 
+  const [isMounted, setIsMounted] = useState(false);
   const [carMakeInput, setCarMakeInput] = useState("");
-  const [options, setOptions] = useState([]);
+  const [carDropdownFocus, setCarDropdownFocus] = useState(false);
+  const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
+
   const [trimOptions, setTrimOptions] = useState(null);
   const [popularModels, setPopularModels] = useState([]);
-  const [carDropdownFocus, setCarDropdownFocus] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [carWithYearOptions, setCarWithYearOptions] = useState(null);
-  const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
-  // const [selectedTrim, setSelectedTrim] = useState(""); // user selected trim
-  const [name, setName] = useState("");
-  // const prevBirthDate = useRef();
-  // const prevTrim = useRef();
-  // const prevYear = useRef();
-  // const [phone, setPhone] = useState("");
-  // const [userBirthDate, setUserBirthDate] = useState("");
 
-  // useStates to control badge change from +xx% to green dot status
-  const [showDotStatusModelField, setShowDotStatusModelField] = useState(false);
-  const [showDotStatusTrimField, setshowDotStatusTrimField] = useState(false);
-  const [showDotStatusNameField, setShowDotStatusNameField] = useState(false);
-  const [showDotStatusPhoneField, setShowDotStatusPhoneField] = useState(false);
-  const [showDotStatusBirthdateField, setShowDotStatusBirthdateField] =
-    useState(false);
+  // const [name, setName] = useState("");
 
   // Perecentage parameters for totalPercentage update
   const percentageParams = {
@@ -70,6 +70,7 @@ export default function FirstStep({
   // get popular models
   useEffect(() => {
     setIsMounted(true);
+
     axios.get(apiBaseUrl + "popular/").then((response) => {
       const mappedResponse = response.data.map((item) => {
         return {
@@ -78,8 +79,11 @@ export default function FirstStep({
           label: `${item.make.make} ${item.model}`,
         };
       });
+
       setPopularModels(mappedResponse);
-      setOptions(mappedResponse);
+      setCarMakeOptions(
+        carMakeOptions.length ? carMakeOptions : mappedResponse
+      );
     });
   }, []);
 
@@ -87,7 +91,7 @@ export default function FirstStep({
     if (!carInfo.year) return;
 
     getTrims(); // call API to get all trims for selected model year
-    setCarDropdownFocus(false);
+    onChangeFocus(false);
     setShowDotStatusModelField(true);
     setTrimOptionsOpen(true); // open trims dropdown
   }, [carInfo.year]);
@@ -102,7 +106,7 @@ export default function FirstStep({
     if (!isMounted) return;
 
     if (!carMakeInput.length) {
-      setOptions(popularModels || []);
+      setCarMakeOptions(popularModels || []);
     }
     const hasYear = carInfo.year;
     const hasModel = carInfo.model;
@@ -118,10 +122,13 @@ export default function FirstStep({
       setCarInfo({
         model: carInfo.model,
         year: null,
-        trim: carInfo.trim,
+        trim: null,
       });
 
-      setOptions(carWithYearOptions);
+      onChangeFocus(false);
+      onChangeFocus(true);
+
+      setCarMakeOptions(carWithYearOptions);
       setShowDotStatusModelField(false);
     }
 
@@ -142,6 +149,9 @@ export default function FirstStep({
       setTotalPercentage(totalPercentage + percentageParams.modelYear);
     }
 
+    console.log(carInfo.year);
+    console.log(prevYear.current);
+
     if (!carInfo.year && prevYear.current) {
       setTotalPercentage(totalPercentage - percentageParams.modelYear);
     }
@@ -151,11 +161,13 @@ export default function FirstStep({
 
   // Increase totalPercentage when trim is selected
   useEffect(() => {
-    if (!prevTrim.current && carInfo.trim) {
+    if (carInfo.trim && !prevTrim.current) {
       setTotalPercentage(totalPercentage + percentageParams.trim);
     }
     if (!carInfo.trim && prevTrim.current) {
-      setTotalPercentage(totalPercentage - percentageParams.trim);
+      setTotalPercentage(
+        totalPercentage - (percentageParams.trim + percentageParams.modelYear)
+      );
     }
 
     prevTrim.current = carInfo.trim;
@@ -202,7 +214,7 @@ export default function FirstStep({
     prevBirthDate.current = userData.birthDate;
   }, [userData.birthDate]);
 
-  const onSelect = (value, option) => {
+  const onSelectCarInput = (value, option) => {
     setCarMakeInput(value);
 
     if (!carInfo.model) {
@@ -270,16 +282,17 @@ export default function FirstStep({
     const yearId = carInfo.year.id;
     const modelId = carInfo.model.id;
     axios
-      .get(apiBaseUrl + `trims/?year=${yearId}&model=${modelId}`)
+      // .get(apiBaseUrl + `trims/?year=${yearId}&model=${modelId}`)
+      .get(apiBaseUrl + `trims/?model_id=${modelId}`)
       .then(function ({ data }) {
         const mappedResponse = data.map((item) => {
           return {
-            id: item.trim__id,
-            label: item.trim__trim,
-            value: item.trim__trim,
+            id: item.id,
+            label: item.trim,
+            value: item.trim,
           };
         });
-
+        console.log(mappedResponse);
         setTrimOptions(mappedResponse);
       });
   };
@@ -293,7 +306,7 @@ export default function FirstStep({
           value: `${option.label}, ${item.year}`,
         };
       });
-      setOptions(mappedResponse);
+      setCarMakeOptions(mappedResponse);
       setCarWithYearOptions(mappedResponse);
     });
   };
@@ -310,7 +323,7 @@ export default function FirstStep({
               label: `${item.make__make} ${item.model}`,
             };
           });
-          setOptions(mappedResponse);
+          setCarMakeOptions(mappedResponse);
         });
     }
   };
@@ -335,10 +348,10 @@ export default function FirstStep({
           >
             <AutoComplete
               id="make-model-year"
-              options={options}
+              options={carMakeOptions}
               style={{ width: 345, marginBottom: 20 }}
               open={carDropdownFocus}
-              onSelect={onSelect}
+              onSelect={onSelectCarInput}
               value={carInfo.year || carInfo.model || carMakeInput}
               onFocus={() => {
                 onChangeFocus(true);
@@ -348,6 +361,7 @@ export default function FirstStep({
               }}
               onSearch={(text) => {
                 setCarMakeInput(text);
+                setTrimOptionsOpen(false);
               }}
               placeholder="Make, model, year"
               renderOption={(option) => {

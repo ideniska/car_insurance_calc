@@ -10,14 +10,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function InsuranceContainer() {
-  const apiBaseUrl = window.location.href + "api/";
-  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
+  // const apiBaseUrl = window.location.href + "api/";
+  const apiBaseUrl = "http://127.0.0.1:8000/api/";
   const [currentStep, setCurrentStep] = useState(0);
   const [carInfo, setCarInfo] = useState({
     model: null,
     year: null,
     trim: null,
   });
+
+  const [carMakeOptions, setCarMakeOptions] = useState([]);
+  const [carWithYearOptions, setCarWithYearOptions] = useState(null);
 
   const prevBirthDate = useRef();
   const prevName = useRef();
@@ -32,10 +35,17 @@ export default function InsuranceContainer() {
     phone: null,
     birthDate: null,
     driverLicence: null,
-    yearIssued: null,
   });
 
   const [totalPercentage, setTotalPercentage] = useState(50);
+
+  // useStates to control badge change from +xx% to green dot status
+  const [showDotStatusModelField, setShowDotStatusModelField] = useState(false);
+  const [showDotStatusTrimField, setshowDotStatusTrimField] = useState(false);
+  const [showDotStatusNameField, setShowDotStatusNameField] = useState(false);
+  const [showDotStatusPhoneField, setShowDotStatusPhoneField] = useState(false);
+  const [showDotStatusBirthdateField, setShowDotStatusBirthdateField] =
+    useState(false);
 
   // let currentStepComponent = (
   //   <FirstStep
@@ -105,6 +115,20 @@ export default function InsuranceContainer() {
               prevPhone={prevPhone}
               prevTrim={prevTrim}
               prevYear={prevYear}
+              carMakeOptions={carMakeOptions}
+              carWithYearOptions={carWithYearOptions}
+              setCarWithYearOptions={setCarWithYearOptions}
+              setCarMakeOptions={setCarMakeOptions}
+              showDotStatusModelField={showDotStatusModelField}
+              setShowDotStatusModelField={setShowDotStatusModelField}
+              showDotStatusTrimField={showDotStatusTrimField}
+              setshowDotStatusTrimField={setshowDotStatusTrimField}
+              showDotStatusNameField={showDotStatusNameField}
+              setShowDotStatusNameField={setShowDotStatusNameField}
+              showDotStatusPhoneField={showDotStatusPhoneField}
+              setShowDotStatusPhoneField={setShowDotStatusPhoneField}
+              showDotStatusBirthdateField={showDotStatusBirthdateField}
+              setShowDotStatusBirthdateField={setShowDotStatusBirthdateField}
             />
           )}
 

@@ -21,11 +21,17 @@ class Model(models.Model):
 
 
 class Trim(models.Model):
-    model = models.ManyToManyField(Model)
+    # make = models.ForeignKey(
+    #     Make, on_delete=models.CASCADE, related_name="trims", db_index=True
+    # )
+    # model = models.ManyToManyField(Model)
+    model = models.ForeignKey(
+        Model, on_delete=models.CASCADE, related_name="trims", db_index=True
+    )
     trim = models.CharField(max_length=250)
 
     def __str__(self):
-        return self.trim
+        return f"{self.model} {self.trim}"
 
 
 class ModelYear(models.Model):

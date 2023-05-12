@@ -25,7 +25,7 @@ export default function SecondStep({
 
   const [insuranceParams, setInsuranceParams] = useState({
     coverage: 2,
-    licenceYear: 0,
+    licenceYear: "",
     deductible: 3,
     milage: 0,
     tires: 0,
@@ -76,13 +76,19 @@ export default function SecondStep({
 
   const [insuranceQuote, setInsuranceQuote] = useState(0);
 
-  useEffect(() => {
-    if (carPrice) {
-      setInsuranceQuote(carPrice * insuranceQuoteRate);
-    } else {
-      setInsuranceQuote("Input car price");
-    }
-  }, [carPrice, insuranceQuoteRate]);
+  // let priceDisplay = (
+  //   <h4 className="small-title">${insuranceQuote.toFixed(2)}</h4>
+  // );
+
+  // useEffect(() => {
+  //   if (carPrice) {
+  //     console.log(carPrice);
+  //     setInsuranceQuote(carPrice * insuranceQuoteRate);
+  //   } else {
+  //     console.log("OOOPS");
+  //     priceDisplay = <h4 className="small-title">OOOPS</h4>;
+  //   }
+  // }, [carPrice, insuranceQuoteRate]);
 
   useEffect(() => {
     if (insuranceParams.paymentType === true) {
@@ -161,6 +167,15 @@ export default function SecondStep({
     2: "20 000 km",
     3: "∞",
   };
+  const onDateInput = (date, dateString) => {
+    setUserData({
+      name: userData.name,
+      phone: userData.phone,
+      birthDate: dateString,
+      driverLicence: userData.driverLicence,
+      yearIssued: userData.yearIssued,
+    });
+  };
 
   const onChangeLeaseSwitch = (value, option) => {
     setInsuranceParams({
@@ -206,13 +221,13 @@ export default function SecondStep({
 
   const onInputDriverLicence = (value, option) => {
     setUserData({
-      ...insuranceParams,
+      ...userData,
       driverLicence: value,
     });
   };
 
   const onInputLicenceYear = (value, option) => {
-    setUserData({
+    setInsuranceParams({
       ...insuranceParams,
       licenceYear: value,
     });
@@ -244,6 +259,7 @@ export default function SecondStep({
                 value={dayjs(userData.birthDate, dateFormat)}
                 format={dateFormat}
                 className="date-picker"
+                onChange={onDateInput}
               />
             </div>
           </div>
@@ -260,6 +276,7 @@ export default function SecondStep({
                 name="driverLicenceYearInput"
                 placeholder="Year issued"
                 onChange={(e) => onInputLicenceYear(e.target.value)}
+                value={insuranceParams.licenceYear}
               />
             </div>
           </div>
