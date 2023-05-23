@@ -55,3 +55,27 @@
 .small-title {
     font-size: 16px !important;
 }
+
+@media only screen and (max-width: 415px) {
+    .calc__container {
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        width: auto;
+    }
+
+    .calc__body {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .calc__form {
+        width: auto;
+    }
+
+    .calc__progress {
+        margin-left: 0;
+        width: auto;
+        padding-bottom: 30px;
+    }
+}
