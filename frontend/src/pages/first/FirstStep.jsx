@@ -35,6 +35,10 @@ export default function FirstStep({
   setShowDotStatusPhoneField,
   showDotStatusBirthdateField,
   setShowDotStatusBirthdateField,
+  trimOptions,
+  setTrimOptions,
+  setPopularModels,
+  popularModels,
 }) {
   const _ = require("lodash");
 
@@ -42,11 +46,6 @@ export default function FirstStep({
   const [carMakeInput, setCarMakeInput] = useState("");
   const [carDropdownFocus, setCarDropdownFocus] = useState(false);
   const [trimOptionsOpen, setTrimOptionsOpen] = useState(false); // trim dropdown disabled before user choose model + year
-
-  const [trimOptions, setTrimOptions] = useState(null);
-  const [popularModels, setPopularModels] = useState([]);
-
-  // const [name, setName] = useState("");
 
   // Perecentage parameters for totalPercentage update
   const percentageParams = {

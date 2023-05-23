@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 
 export default function InsuranceContainer() {
-  // const apiBaseUrl = window.location.href + "api/";
-  const apiBaseUrl = "http://127.0.0.1:8000/api/";
+  const apiBaseUrl = window.location.href + "api/";
+  // const apiBaseUrl = "http://127.0.0.1:8000/api/";
   const [currentStep, setCurrentStep] = useState(0);
   const [carInfo, setCarInfo] = useState({
     model: null,
@@ -21,6 +21,8 @@ export default function InsuranceContainer() {
 
   const [carMakeOptions, setCarMakeOptions] = useState([]);
   const [carWithYearOptions, setCarWithYearOptions] = useState(null);
+  const [trimOptions, setTrimOptions] = useState(null);
+  const [popularModels, setPopularModels] = useState([]);
 
   const prevBirthDate = useRef();
   const prevName = useRef();
@@ -129,6 +131,10 @@ export default function InsuranceContainer() {
               setShowDotStatusPhoneField={setShowDotStatusPhoneField}
               showDotStatusBirthdateField={showDotStatusBirthdateField}
               setShowDotStatusBirthdateField={setShowDotStatusBirthdateField}
+              trimOptions={trimOptions}
+              setTrimOptions={setTrimOptions}
+              popularModels={popularModels}
+              setPopularModels={setPopularModels}
             />
           )}
 
