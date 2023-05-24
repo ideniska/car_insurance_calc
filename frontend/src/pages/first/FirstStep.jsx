@@ -428,6 +428,7 @@ export default function FirstStep({
           >
             <DatePicker
               name="birthDateInput"
+              placeholder="Date of birth"
               // defaultValue={dayjs("1987/12/01", dateFormat)}
               format={dateFormat}
               style={{ width: 345, marginBottom: 20 }}
@@ -442,8 +443,10 @@ export default function FirstStep({
         </form>
       </div>
       <div className="calc__progress">
-        <p>Completed to show the exact cost:</p>
-        <h3>{totalPercentage}%</h3>
+        <div className="calc__progress_total">
+          <p>Completed to show the exact cost:</p>
+          <h3>{totalPercentage}%</h3>
+        </div>
         <div
           className="progress"
           style={{

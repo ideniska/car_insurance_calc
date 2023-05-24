@@ -344,19 +344,24 @@ export default function SecondStep({
         </form>
       </div>
       <div className="calc__progress">
-        <p className="inactive-text">Insurance price</p>
-        <div className="lease-switch-group">
-          <h4 className="small-title">${insuranceQuote.toFixed(2)}</h4>
-          <Switch
-            checkedChildren="Yearly"
-            unCheckedChildren="Monthly"
-            defaultChecked
-            onChange={onChangeInsurancePriceDisplay}
-          />
+        <div className="insurance_price">
+          <p className="inactive-text">Insurance price</p>
+          <div className="lease-switch-group">
+            <h4 className="small-title" id="insurance-quote">
+              ${insuranceQuote.toFixed(2)}
+            </h4>
+            <Switch
+              checkedChildren="Yearly"
+              unCheckedChildren="Monthly"
+              defaultChecked
+              onChange={onChangeInsurancePriceDisplay}
+            />
+          </div>
         </div>
+
         <hr />
-        <div>
-          <p className="inactive-text totals-vehicle">Your vehicle:</p>
+        <div className="your_vehicle">
+          <p className="inactive-text totals-vehicle">Your vehicle</p>
           <p className="totals-vehicle">
             {carInfo.year.value} {carInfo.trim.value}
           </p>

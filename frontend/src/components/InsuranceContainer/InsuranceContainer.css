@@ -6,3 +6,15 @@
     height: 100vh;
     background-color: #FFFCFA;
 }
+
+/* On screens that are 415px wide or less */
+@media only screen and (max-width: 415px) {
+    .page {
+        display: block;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color: #FFFCFA;
+        padding-top: 30px;
+    }
+}
